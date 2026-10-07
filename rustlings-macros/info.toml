@@ -370,7 +370,7 @@ reference, so they can be stored in a normal (non-`mut`) static without any
 `unsafe`.
 
 Look at the method `fetch_add` in the documentation:
-https://doc.rust-lang.org/std/sync/atomic/struct.AtomicU32.html#method.fetch_add
+https://doc.rust-lang.org/std/sync/atomic/type.AtomicU32.html#method.fetch_add
 
 Don't worry about `Ordering` for now. `Ordering::Relaxed` is fine here."""
 
