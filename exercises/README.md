@@ -13,6 +13,9 @@
 | struct_basics          | §5.1, §5.2          |
 | enum_basics            | §6.1-3              |
 | references             | §4.2-3              |
+| ownership              | §4.1                |
+| borrowing              | §4.2-3              |
+| lifetime_labels        | §10.3               |
 | vecs                   | §8.1                |
 | move_semantics         | §4.1-2              |
 | structs                | §5.1, §5.3          |

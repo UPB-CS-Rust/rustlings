@@ -1477,6 +1477,386 @@ dir = "quizzes"
 hint = """
 No hints this time ;)"""
 
+# OWNERSHIP
+
+[[exercises]]
+name = "ownership1"
+dir = "04h_ownership"
+test = false
+hint = """
+Integers, floats, `bool` and `char` are *Copy* types: assigning them to
+another variable copies the value, and both variables stay usable.
+
+A `String` is a *move* type: `let s2 = s1;` moves the ownership of the text to
+`s2`. After that, `s1` can't be used anymore.
+
+Use the variable that owns the text now.
+https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html#variables-and-data-interacting-with-move"""
+
+[[exercises]]
+name = "ownership2"
+dir = "04h_ownership"
+test = false
+hint = """
+Passing a `String` to a function moves it into the function's parameter. When
+the function ends, the parameter is dropped (its memory is freed).
+
+A function can give the ownership back by *returning* the value. Change
+`greet` so that it returns the `String` it received, and use the returned
+value in `main`."""
+
+[[exercises]]
+name = "ownership3"
+dir = "04h_ownership"
+test = false
+hint = """
+Structs are move types by default, even if all their fields are Copy types.
+
+If all fields are Copy, you can make the struct Copy too by adding
+`#[derive(Clone, Copy)]` above the struct definition."""
+
+[[exercises]]
+name = "ownership4"
+dir = "04h_ownership"
+test = false
+hint = """
+A struct can only be `Copy` if *all* of its fields are `Copy`. A `String` owns
+memory on the heap, so it can never be `Copy` (two copies would both try to
+free the same memory).
+
+Remove the derive line. Then `p1` is moved into `p2` and can't be used
+anymore. But `score` is a `u32` (Copy), so you can copy that single field out
+of `p1` *before* the move."""
+
+[[exercises]]
+name = "ownership5"
+dir = "04h_ownership"
+test = false
+hint = """
+`let name = player.name;` moves only the `name` field out of `player` (a
+*partial move*). The other fields can still be used, but `player` as a whole
+can't.
+
+If you only want to look at the name, borrow it instead: `&player.name`."""
+
+[[exercises]]
+name = "ownership6"
+dir = "04h_ownership"
+test = false
+hint = """
+In the first iteration of the loop, `message` is moved into `print_twice`. In
+the second iteration, there is nothing left to move!
+
+Change `print_twice` so that it only borrows the text (`&str`) and pass
+`&message`. A `&String` is automatically converted into a `&str`."""
+
+[[exercises]]
+name = "ownership7"
+dir = "04h_ownership"
+test = false
+hint = """
+Putting a `String` into a tuple (or an array, or a struct) moves it there. The
+tuple owns it now.
+
+You can still reach the text *through* the tuple: `pair.0` and `pair.1`."""
+
+[[exercises]]
+name = "ownership8"
+dir = "04h_ownership"
+test = false
+hint = """
+Sometimes you really need two independent owners of the same data. Then you
+can make a deep copy with `.clone()`: `let copy = original.clone();`
+
+(This "dot" syntax calls a *method*. You'll learn about methods later, for now
+just remember that `.clone()` creates a full copy.)
+
+Here, the first letter can get a clone of the template and the second letter
+can take the original. Cloning allocates new memory, so only clone when you
+really need two owners."""
+
+[[exercises]]
+name = "ownership9"
+dir = "04h_ownership"
+test = false
+hint = """
+You can't move a `String` out of an array just by indexing it: the array would
+be left with a "hole". Borrow the element instead: `&names[0]`.
+
+Note that this works for arrays of Copy types like `[i32; 3]`, because the
+element is just copied."""
+
+[[exercises]]
+name = "ownership10"
+dir = "04h_ownership"
+hint = """
+`match message` moves the `String` inside of `Message::Text` into the variable
+`text`. After that, `message` can't be used anymore.
+
+Match on a reference instead: `match &message { ... }`. Then `text` is a
+`&String` and nothing is moved."""
+
+[[exercises]]
+name = "ownership11"
+dir = "04h_ownership"
+test = false
+hint = """
+The compiler checks *all* possible paths. If `send` might have moved `letter`
+(when `urgent` is `true`), then `letter` can't be used after the `if`, even
+if the program would actually take the other branch at runtime.
+
+Print the letter *before* the `if`, or let `send` only borrow it (`&str`)."""
+
+# BORROWING
+
+[[exercises]]
+name = "borrowing1"
+dir = "04i_borrowing"
+hint = """
+`is_admin` takes ownership of the name, so the caller can't use it anymore.
+It only needs to *look* at the name, so it should borrow it.
+
+The usual type for borrowing text is `&str`. You can pass a `&String` to it
+(it is converted automatically), and also string literals like `"admin"`."""
+
+[[exercises]]
+name = "borrowing2"
+dir = "04i_borrowing"
+hint = """
+A function taking `&String` only accepts references to a `String`. A string
+literal like `"Ana"` is a `&str`, not a `&String`.
+
+If you change the parameter to `&str`, the function accepts both: a `&String`
+is automatically turned into a `&str` (this is called *deref coercion*)."""
+
+[[exercises]]
+name = "borrowing3"
+dir = "04i_borrowing"
+hint = """
+To replace the caller's `String`, the function needs a mutable reference
+(`&mut String`) and must assign through it: `*text = String::from("...");`
+
+The old `String` is dropped automatically when it is replaced."""
+
+[[exercises]]
+name = "borrowing4"
+dir = "04i_borrowing"
+test = false
+hint = """
+While `first` (a shared reference to `text`) is still going to be used, `text`
+can't be borrowed mutably. Otherwise `first` could suddenly see different text.
+
+Use `first` for the last time *before* calling `shout`."""
+
+[[exercises]]
+name = "borrowing5"
+dir = "04i_borrowing"
+test = false
+hint = """
+Moving a value while it is borrowed isn't allowed: the reference would point
+to a value that now belongs to someone else (and might already be gone).
+
+Reorder the lines so that `r` is used for the last time before `s` is moved."""
+
+[[exercises]]
+name = "borrowing6"
+dir = "04i_borrowing"
+test = false
+hint = """
+`for name in names` moves the whole array into the loop (each `String` is moved
+into `name`), so `names` can't be used after the loop.
+
+Loop over a reference instead: `for name in &names`. Then each `name` is a
+`&String`."""
+
+[[exercises]]
+name = "borrowing7"
+dir = "04i_borrowing"
+test = false
+hint = """
+`log_score(&mut player.score, &player)` would need a mutable borrow of a field
+and a shared borrow of the whole player at the same time. That's not allowed.
+
+But borrowing two *different fields* is fine! Change `log_score` so that it
+receives only the name (`&str`) instead of the whole player and pass
+`&player.name`."""
+
+[[exercises]]
+name = "borrowing8"
+dir = "04i_borrowing"
+hint = """
+Function parameters that only read data should be shared references
+(`&Player`), functions that change data need mutable references
+(`&mut Player`).
+
+Inside `rename`, create a new `String` from the `&str`:
+`player.name = String::from(new_name);`"""
+
+[[exercises]]
+name = "borrowing9"
+dir = "04i_borrowing"
+hint = """
+Return a reference into the array that the function borrowed. Loop over
+`players` (a `&[Player; N]`), so each `player` is a `&Player`, and keep the
+best one in a variable: `let mut best = &players[0];`
+
+The returned `&str` borrows from the caller's array. `&best.name` is a
+`&String` that is automatically converted into a `&str`."""
+
+[[exercises]]
+name = "borrowing10"
+dir = "04i_borrowing"
+hint = """
+Loop over the `&mut [Player; N]` with `for player in players`: each `player`
+is a `&mut Player` and you can change its fields directly
+(`player.score += bonus;`)."""
+
+# LIFETIME LABELS
+
+[[exercises]]
+name = "lifetime_labels1"
+dir = "04j_lifetimes"
+hint = """
+The function receives two references and returns one. The compiler needs to
+know which input the returned reference comes from, so that it can check that
+the result isn't used after that input is gone.
+
+Since the result can come from either `a` or `b`, put the same label on all
+three references:
+
+```
+fn longer<'a>(a: &'a str, b: &'a str) -> &'a str
+```
+
+`<'a>` declares the label, `&'a str` attaches it to a reference.
+https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-annotations-in-function-signatures"""
+
+[[exercises]]
+name = "lifetime_labels2"
+dir = "04j_lifetimes"
+hint = """
+The label `'a` says: "the result is valid only as long as *all* inputs labeled
+`'a` are valid". Here both inputs are labeled, so the result can't outlive
+`separator`, which is dropped at the end of the inner block.
+
+But the result always comes from `text`, never from `separator`! Remove the
+label from `separator` (just `&str`). Then the result is only tied to `text`."""
+
+[[exercises]]
+name = "lifetime_labels3"
+dir = "04j_lifetimes"
+hint = """
+`later` returns a reference labeled like *both* inputs, so `result` may point
+into `b`. `b` is dropped at the end of the inner block, so `result` must not be
+used after that.
+
+Move the assertion into the inner block (the function signature is correct)."""
+
+[[exercises]]
+name = "lifetime_labels4"
+dir = "04j_lifetimes"
+hint = """
+A struct that holds a reference needs a label too, because the struct must not
+outlive the data it borrows:
+
+```
+struct Excerpt<'a> {
+    text: &'a str,
+}
+```
+
+Functions that use the struct then write `Excerpt<'a>` (or `Excerpt<'_>`
+when the label can be inferred)."""
+
+[[exercises]]
+name = "lifetime_labels5"
+dir = "04j_lifetimes"
+hint = """
+The returned `Quote` borrows from one of the two inputs, so the compiler needs
+a label that connects them. The returned struct can come from `a` or `b`, so
+all three get the same label:
+
+```
+fn pick<'a>(a: &'a str, b: &'a str, first: bool) -> Quote<'a>
+```"""
+
+[[exercises]]
+name = "lifetime_labels6"
+dir = "04j_lifetimes"
+hint = """
+String literals are stored in the program itself and are valid for the whole
+run of the program. Their label is the special `'static`.
+
+`default_name` has no reference parameters, so the compiler can't guess where
+the result comes from. Tell it: `-> &'static str`.
+
+In `display_name`, returning a `'static` reference is fine even though the
+label says `'a`: a reference that lives forever also lives long enough for
+`'a`."""
+
+[[exercises]]
+name = "lifetime_labels7"
+dir = "04j_lifetimes"
+hint = """
+With a single label `'a` for both fields, the compiler assumes that *both*
+references live only as long as the shorter one. Then the result of
+`second` can't outlive `short`, even though it comes from `long`.
+
+Use two different labels so that each field keeps its own:
+
+```
+struct Pair<'a, 'b> {
+    first: &'a str,
+    second: &'b str,
+}
+
+fn second<'a, 'b>(pair: &Pair<'a, 'b>) -> &'b str
+```"""
+
+[[exercises]]
+name = "lifetime_labels8"
+dir = "04j_lifetimes"
+hint = """
+Labels only *describe* how long references live. They can't make a value live
+longer! `text` is a local variable that is dropped when the function returns,
+so no label can make a reference to it valid.
+
+Return the `String` itself (transferring the ownership to the caller) instead
+of a reference."""
+
+[[exercises]]
+name = "lifetime_labels9"
+dir = "04j_lifetimes"
+hint = """
+The labels are wrong: the result comes from `person.name`, so it must have the
+same label as the `person` reference. `'b` isn't connected to anything, so the
+compiler can't check it.
+
+When a function has exactly *one* reference parameter, you don't need labels
+at all: the compiler automatically gives the result the same label as the
+input (this is called *lifetime elision*). So you can also just remove all
+labels."""
+
+[[exercises]]
+name = "lifetime_labels10"
+dir = "04j_lifetimes"
+hint = """
+The result is one of the elements of `words` *or* `fallback`, so these
+references need the same label, including the ones inside the array:
+`[&'a str; N]`.
+
+`limit` is only used for comparing. The result never comes from it, so it
+doesn't need the label (and it shouldn't have it, look at the test
+`short_lived_limit`)."""
+
+# QUIZ OWNERSHIP
+
+[[exercises]]
+name = "quiz_ownership"
+dir = "quizzes"
+hint = """
+No hints this time ;)"""
+
 # VECS
 
 [[exercises]]
